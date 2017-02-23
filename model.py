@@ -28,7 +28,6 @@ class UNet():
 
         dim_ordering = backend
         if backend == 'tf':
-            # tf backend need input to be a (batch, height, width, channel) format
             inputs = tf_input
             concat_axis = 3
         else:
@@ -80,9 +79,9 @@ class UNet():
         up9 = merge([up_conv8, crop_conv1], mode='concat', concat_axis=concat_axis)
         conv9 = Convolution2D(32, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(up9)
         conv9 = Convolution2D(32, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv9)
-        conv9 = ZeroPadding2D(padding=(6,6), dim_ordering=dim_ordering)(conv9)
 
-
+        ch, cw = self.get_crop_shape(inputs, conv9)
+        conv9 = ZeroPadding2D(padding=(ch[0], ch[1], cw[0], cw[1]), dim_ordering=dim_ordering)(conv9)
         conv10 = Convolution2D(1, 1, 1, activation='sigmoid', dim_ordering=dim_ordering)(conv9)
 
         if backend == 'tf':
@@ -90,4 +89,5 @@ class UNet():
         else:
             model = Model(input=inputs, output=conv10)
             return model
+
 
