@@ -12,7 +12,7 @@ I use the Unet architecture and modify its unsampling part to automatically adju
   ```python
   python train.py
   ``` 
-- Visual train loss, dice score, and output mask per iteration in tensorboard
+- Visualize the train loss, dice score, output mask, and first layer convolutional kernels per iteration in tensorboard
 
   ```
   tensorboard --logdir=train_log/
