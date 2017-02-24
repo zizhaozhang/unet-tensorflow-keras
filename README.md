@@ -9,7 +9,7 @@ I use the Unet architecture and modify its unsampling part to automatically adju
 
 ### Usage
 - Write a data loader by yourself
-- Set necessary hpyerparameters inside the train.py 
+- Set necessary hpyerparameters inside train.py 
 
   ```python
   python train.py
