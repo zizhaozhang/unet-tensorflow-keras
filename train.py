@@ -99,7 +99,7 @@ def train():
         start = global_step.eval()
         for it in range(start, tot_iter):
             x_batch, y_batch = loader.load_batch()
-            # tensorflow want a different tensor order
+            # tensorflow wants a different tensor order
             feed_dict = {   img: x_batch.transpose((0,2,3,1)),
                             label:y_batch.transpose((0,2,3,1))}
             _, loss, summary, dice_score = sess.run([ train_step, 
