@@ -40,7 +40,7 @@ opt  = {
 }
 
 # define data loader
-loader = MuscleDataLayer(opt)
+loader = DataLayer(opt)
 iter_epoch = loader.get_iter_epoch()
 # define model, the last dimension is the channel
 img_shape = (None, 300, 300, 3)
