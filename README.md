@@ -7,6 +7,12 @@ Using Keras to build the model is super easy and fully compatible with Tensorflo
 
 I use the Unet architecture and modify its unsampling part to automatically adjust the feature map width and height when merge (concat) with previous layers. In this way, we do not need to compute the specific input size to fit the model but take an arbitrary size. 
 
+**July UPDATE**: 
+  - Change the code to fit Tensorflow > 1.0 
+  - Adding a loader file to use Keras generator to load image and mask with automatic augmentation
+  - Adding VIS module to manage the evaluation metric.
+  - Adding opt.py to support easier use
+
 ### Usage
 - Write a data loader by yourself
 - Set necessary hpyerparameters inside train.py 

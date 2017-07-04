@@ -1,5 +1,14 @@
+'''
+ * @author [Zizhao Zhang]
+ * @email [zizhao@cise.ufl.edu]
+ * @create date 2017-05-25 02:21:13
+ * @modify date 2017-05-25 02:21:13
+ * @desc [description]
+'''
 from keras.models import Model
-from keras.layers import Input, merge, Convolution2D, MaxPooling2D, UpSampling2D, Cropping2D, ZeroPadding2D
+from keras.layers import Input, merge, concatenate, MaxPooling2D, UpSampling2D, Cropping2D, ZeroPadding2D
+from keras.layers.convolutional import Conv2D
+from keras.layers.merge import concatenate
 import tensorflow as tf
 
 class UNet():
@@ -24,70 +33,63 @@ class UNet():
 
         return (ch1, ch2), (cw1, cw2)
 
-    def create_model(self, img_shape=None, backend='th', tf_input=None):
+    def create_model(self, img_shape, num_class):
 
-        dim_ordering = backend
-        if backend == 'tf':
-            inputs = tf_input
-            concat_axis = 3
-        else:
-            inputs = Input(shape = img_shape)
-            concat_axis = 1
-            
-        conv1 = Convolution2D(32, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering, name='conv1_1')(inputs)
-        conv1 = Convolution2D(32, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv1)
-        pool1 = MaxPooling2D(pool_size=(2, 2), dim_ordering=dim_ordering)(conv1)
-        conv2 = Convolution2D(64, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(pool1)
-        conv2 = Convolution2D(64, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv2)
-        pool2 = MaxPooling2D(pool_size=(2, 2), dim_ordering=dim_ordering)(conv2)
+        concat_axis = 3
+        inputs = Input(shape = img_shape)
 
-        conv3 = Convolution2D(128, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(pool2)
-        conv3 = Convolution2D(128, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv3)
-        pool3 = MaxPooling2D(pool_size=(2, 2), dim_ordering=dim_ordering)(conv3)
+        conv1 = Conv2D(32, (3, 3), activation='relu', padding='same', name='conv1_1')(inputs)
+        conv1 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv1)
+        pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
+        conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(pool1)
+        conv2 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv2)
+        pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
 
-        conv4 = Convolution2D(256, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(pool3)
-        conv4 = Convolution2D(256, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv4)
-        pool4 = MaxPooling2D(pool_size=(2, 2), dim_ordering=dim_ordering)(conv4)
+        conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(pool2)
+        conv3 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv3)
+        pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
 
-        conv5 = Convolution2D(512, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(pool4)
-        conv5 = Convolution2D(512, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv5)
+        conv4 = Conv2D(256, (3, 3), activation='relu', padding='same')(pool3)
+        conv4 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv4)
+        pool4 = MaxPooling2D(pool_size=(2, 2))(conv4)
 
-        up_conv5 = UpSampling2D(size=(2, 2), dim_ordering=dim_ordering)(conv5)
+        conv5 = Conv2D(512, (3, 3), activation='relu', padding='same')(pool4)
+        conv5 = Conv2D(512, (3, 3), activation='relu', padding='same')(conv5)
+
+        up_conv5 = UpSampling2D(size=(2, 2))(conv5)
         ch, cw = self.get_crop_shape(conv4, up_conv5)
-        crop_conv4 = Cropping2D(cropping=(ch,cw), dim_ordering=dim_ordering)(conv4)
-        up6 = merge([up_conv5, crop_conv4], mode='concat', concat_axis=concat_axis)
-        conv6 = Convolution2D(256, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(up6)
-        conv6 = Convolution2D(256, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv6)
+        crop_conv4 = Cropping2D(cropping=(ch,cw))(conv4)
+        up6 = concatenate([up_conv5, crop_conv4], axis=concat_axis)
+        conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(up6)
+        conv6 = Conv2D(256, (3, 3), activation='relu', padding='same')(conv6)
 
-        up_conv6 = UpSampling2D(size=(2, 2), dim_ordering=dim_ordering)(conv6)
+        up_conv6 = UpSampling2D(size=(2, 2))(conv6)
         ch, cw = self.get_crop_shape(conv3, up_conv6)
-        crop_conv3 = Cropping2D(cropping=(ch,cw), dim_ordering=dim_ordering)(conv3)
-        up7 = merge([up_conv6, crop_conv3], mode='concat', concat_axis=concat_axis)
-        conv7 = Convolution2D(128, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(up7)
-        conv7 = Convolution2D(128, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv7)
+        crop_conv3 = Cropping2D(cropping=(ch,cw))(conv3)
+        up7 = concatenate([up_conv6, crop_conv3], axis=concat_axis) 
+        conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(up7)
+        conv7 = Conv2D(128, (3, 3), activation='relu', padding='same')(conv7)
 
-        up_conv7 = UpSampling2D(size=(2, 2), dim_ordering=dim_ordering)(conv7)
+        up_conv7 = UpSampling2D(size=(2, 2))(conv7)
         ch, cw = self.get_crop_shape(conv2, up_conv7)
-        crop_conv2 = Cropping2D(cropping=(ch,cw), dim_ordering=dim_ordering)(conv2)
-        up8 = merge([up_conv7, crop_conv2], mode='concat', concat_axis=concat_axis)
-        conv8 = Convolution2D(64, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(up8)
-        conv8 = Convolution2D(64, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv8)
+        crop_conv2 = Cropping2D(cropping=(ch,cw))(conv2)
+        up8 = concatenate([up_conv7, crop_conv2], axis=concat_axis)
+        conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(up8)
+        conv8 = Conv2D(64, (3, 3), activation='relu', padding='same')(conv8)
 
-        up_conv8 = UpSampling2D(size=(2, 2), dim_ordering=dim_ordering)(conv8)
+        up_conv8 = UpSampling2D(size=(2, 2))(conv8)
         ch, cw = self.get_crop_shape(conv1, up_conv8)
-        crop_conv1 = Cropping2D(cropping=(ch,cw), dim_ordering=dim_ordering)(conv1)
-        up9 = merge([up_conv8, crop_conv1], mode='concat', concat_axis=concat_axis)
-        conv9 = Convolution2D(32, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(up9)
-        conv9 = Convolution2D(32, 3, 3, activation='relu', border_mode='same', dim_ordering=dim_ordering)(conv9)
+        crop_conv1 = Cropping2D(cropping=(ch,cw))(conv1)
+        up9 = concatenate([up_conv8, crop_conv1], axis=concat_axis)
+        conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(up9)
+        conv9 = Conv2D(32, (3, 3), activation='relu', padding='same')(conv9)
 
         ch, cw = self.get_crop_shape(inputs, conv9)
-        conv9 = ZeroPadding2D(padding=(ch[0], ch[1], cw[0], cw[1]), dim_ordering=dim_ordering)(conv9)
-        conv10 = Convolution2D(1, 1, 1, activation='sigmoid', dim_ordering=dim_ordering)(conv9)
+        conv9 = ZeroPadding2D(padding=((ch[0], ch[1]), (cw[0], cw[1])))(conv9)
+        conv10 = Conv2D(num_class, (1, 1))(conv9)
 
-        if backend == 'tf':
-            return conv10
-        else:
-            model = Model(input=inputs, output=conv10)
-            return model
+        model = Model(inputs=inputs, outputs=conv10)
+
+        return model
 
 

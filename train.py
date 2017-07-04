@@ -1,122 +1,134 @@
-# Muscle Segmentation using UNet
-# Modified Unet to take arbitrary input size
-# Zizhao @ UF
-
+'''
+ * @author [Zizhao Zhang]
+ * @email [zizhao@cise.ufl.edu]
+ * @create date 2017-05-19 03:06:32
+ * @modify date 2017-05-19 03:06:32
+ * @desc [description]
+'''
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from keras.optimizers import Adam
-from keras.callbacks import ModelCheckpoint, LearningRateScheduler
+SEED=0
+import numpy as np
+np.random.seed(SEED)
+import keras
 from keras import backend as K
 import tensorflow as tf
+tf.set_random_seed(SEED)
 
-import argparse
-import os
+import os, shutil
 from model import UNet
-from utils import dice_coef, dice_coef_loss
+from utils import dice_coef
+from loader import dataLoader, folderLoader
+from utils import VIS, mean_IU
+# configure args
+from opts import *
 
-## TODO: Writing your own data layer to read image and corresponding groundtruth mask
-## see below for detailed output format
-from loader import DataLayer
+# save and compute metrics
+vis = VIS(save_path=opt.checkpoint_path)
 
 # configuration session
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 K.set_session(sess)
-K.set_learning_phase(0)
+K.set_learning_phase(1)
 
-# define opts
-opt  = {
-        'batch_size': 2,
-        'learning_rate': 0.0001,
-        'lr_decay': 0.5,
-        'save_model_every': 100,
-        'checkpoint_path': 'checkpoints/unet',
-        'epoch': 50,
-        'load_from_checkpoint': 'unet-654'
-}
-
-# define data loader
-loader = DataLayer(opt)
-iter_epoch = loader.get_iter_epoch()
-# define model, the last dimension is the channel
-img_shape = (None, 300, 300, 3)
+# define data loader (with train and test)
+train_generator, _, train_samples, _ = dataLoader(opt.data_path, opt.batch_size, opt.imSize)
+# define test loader (optional to replace above test_generator)
+test_generator, test_samples = folderLoader(opt.data_path)
+opt.iter_epoch = int(train_samples) 
+# define input holders
+img_shape = (opt.imSize, opt.imSize, 3)
 img = tf.placeholder(tf.float32, shape=img_shape)
-label = tf.placeholder(tf.float32, shape=(None, 300, 300, 1))
+label = tf.placeholder(tf.int32, shape=(None, opt.imSize, opt.imSize))
+# define model
 with tf.name_scope('unet'):
-    pred = UNet().create_model(img_shape, backend='tf', tf_input=img)
+    model = UNet().create_model(img_shape=img_shape, num_class=opt.num_class)
+    img = model.input
+    pred = model.output
 # define loss
 with tf.name_scope('cross_entropy'):
-    cross_entropy_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=pred))
-# define optimzer
+    cross_entropy_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label, logits=pred))
+# define optimizer
 global_step = tf.Variable(0, name='global_step', trainable=False)
 with tf.name_scope('learning_rate'):
-    learning_rate = tf.train.exponential_decay(0.0001, global_step,
-                                           iter_epoch*3, 0.5, staircase=True)
+    learning_rate = tf.train.exponential_decay(opt.learning_rate, global_step,
+                                           opt.iter_epoch, opt.lr_decay, staircase=True)
 train_step = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cross_entropy_loss, global_step=global_step)
 # compute dice score for simple evaluation during training
-with tf.name_scope('dice_eval'):
-    dice_evaluator = tf.reduce_mean(dice_coef(label, pred))
-
-# visualization conv1
-conv1_kernel = tf.global_variables()[0] # get the first convolutional kernel
-# normalize to the rgb space
-x_min = tf.reduce_min(conv1_kernel)
-x_max = tf.reduce_max(conv1_kernel)
-kernel_0_to_1 = (conv1_kernel - x_min) / (x_max - x_min)
-kernel_transposed = tf.transpose(kernel_0_to_1, [3, 0, 1, 2]) # transpose
-
-# deine summary for tensorboard
+# with tf.name_scope('dice_eval'):
+#     dice_evaluator = tf.reduce_mean(dice_coef(label, pred))
+''' Tensorboard visualization '''
+# cleanup pervious info
+if opt.load_from_checkpoint == '':
+    cf = os.listdir(opt.checkpoint_path)
+    for item in cf: 
+        if 'event' in item: 
+            os.remove(os.path.join(opt.checkpoint_path, item))
+# define summary for tensorboard
 tf.summary.scalar('cross_entropy_loss', cross_entropy_loss)
-tf.summary.image('prediction', pred)
 tf.summary.scalar('learning_rate', learning_rate)
-tf.summary.scalar('dice_score', dice_evaluator)
-tf.summary.image('conv1/kernel', kernel_transposed)
 summary_merged = tf.summary.merge_all()
 # define saver
-if os.path.isdir('./train_log'): os.system('rm train_log/*')
-train_writer = tf.summary.FileWriter('./train_log', sess.graph)
-saver = tf.train.Saver()
+train_writer = tf.summary.FileWriter(opt.checkpoint_path, sess.graph)
+saver = tf.train.Saver() # must be added in the end
 
-def train():
-    tot_iter = iter_epoch * opt['epoch']
+''' Main '''
+tot_iter = opt.iter_epoch * opt.epoch
+init_op = tf.global_variables_initializer()
+sess.run(init_op)
 
-    init_op = tf.global_variables_initializer()
-    sess.run(init_op)
-    with tf.Graph().as_default(), sess.as_default():
-       
-        # restore from a checkpoint if exists
-        # the name_scope can not change 
+with sess.as_default():
+    # restore from a checkpoint if exists
+    # the name_scope can not change 
+    if opt.load_from_checkpoint != '':
         try:
-            saver.restore(sess, os.path.join('checkpoints',opt['load_from_checkpoint']))
-            print ('--> load from checkpoint '+opt['load_from_checkpoint'])
-        except Exception, e:
+            saver.restore(sess, opt.load_from_checkpoint)
+            print ('--> load from checkpoint '+opt.load_from_checkpoint)
+        except e:
                 print ('unable to load checkpoint ...' + str(e))
+    # debug
+    start = global_step.eval()
+    for it in range(start, tot_iter):
+        if it % opt.iter_epoch == 0 or it == start:
+            
+            saver.save(sess, opt.checkpoint_path+'model', global_step=global_step)
+            print ('save a checkpoint at '+ opt.checkpoint_path+'model-'+str(it))
+            print ('start testing {} samples...'.format(test_samples))
+            K.set_learning_phase(0)
+            for ti in range(test_samples):
+                x_batch, y_batch, name = next(test_generator)
+                # tensorflow wants a different tensor order
+                feed_dict = {   
+                                img: x_batch,
+                                label: y_batch,
+                            }
+                loss, pred_logits = sess.run([cross_entropy_loss, pred], feed_dict=feed_dict)
+                pred_map = np.argmax(pred_logits[0],axis=2)
+                score = vis.add_sample(pred_map, y_batch[0])
+            vis.compute_scores(suffix=it)
+            K.set_learning_phase(1)
         
-        start = global_step.eval()
-        for it in range(start, tot_iter):
-            x_batch, y_batch = loader.load_batch()
-            # tensorflow wants a different tensor order
-            feed_dict = {   img: x_batch.transpose((0,2,3,1)),
-                            label:y_batch.transpose((0,2,3,1))}
-            _, loss, summary, dice_score = sess.run([ train_step, 
-                                                cross_entropy_loss, 
-                                                summary_merged, 
-                                                dice_evaluator], \
-                                        feed_dict=feed_dict)
-            global_step.assign(it).eval()
-            train_writer.add_summary(summary, it)
-            if it % 10 == 0 : 
-                print ('epoch %f: loss=%f, dice_score=%f' % (float(it)/iter_epoch, loss, dice_score))
-            if it % iter_epoch == 0:
-                saver.save(sess, opt['checkpoint_path'], global_step=global_step)
-                print ('save a checkpoint at '+ opt['checkpoint_path']+'-'+str(it))
-        
-def main(_):
-    train()
+        x_batch, y_batch = next(train_generator)
+        feed_dict = {   img: x_batch,
+                        label: y_batch
+                    }
+        _, loss, summary, lr, pred_logits = sess.run([ train_step, 
+                                    cross_entropy_loss, 
+                                    summary_merged,
+                                    learning_rate,
+                                    pred
+                                    ], feed_dict=feed_dict)
+        global_step.assign(it).eval()
 
-if __name__ == "__main__":
-    tf.app.run()
+        pred_map = np.argmax(pred_logits[0],axis=2)
+        score, _ = mean_IU(pred_map, y_batch[0])
+
+        train_writer.add_summary(summary, it)
+        if it % 20 == 0 : 
+            print ('[iter %d, epoch %.3f]: lr=%f loss=%f, mean_IU=%f' % (it, float(it)/opt.iter_epoch, lr, loss, score))
+        
