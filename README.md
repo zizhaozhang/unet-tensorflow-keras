@@ -7,18 +7,18 @@ Using Keras to build the model is super easy and fully compatible with Tensorflo
 
 I use the Unet architecture and modify its unsampling part to automatically adjust the feature map width and height when merge (concat) with previous layers. In this way, we do not need to compute the specific input size to fit the model but take an arbitrary size. 
 
-**July UPDATE**: 
+**UPDATE, July 2017**: 
   - Change the code to fit Tensorflow > 1.0 
   - Adding a loader file to use Keras generator to load image and mask with automatic augmentation
-  - Adding VIS module to manage the evaluation metric.
+  - Adding a VIS module to manage the evaluation metric.
   - Adding opt.py to support easier use
 
 ### Usage
-- Write a data loader by yourself
-- Set necessary hpyerparameters inside train.py 
+- See loader.py to organize your train/test data hierarchy 
+- Set necessary hpyerparameters and run train.py 
 
-  ```python
-  python train.py
+  ```bash
+  python train.py --data_path ./datasets/your_dataset_folder/ --checkpoint_path ./checkpoints/unet_example/
   ``` 
 - Visualize the train loss, dice score, learning rate, output mask, and first layer convolutional kernels per iteration in tensorboard
 
@@ -26,3 +26,8 @@ I use the Unet architecture and modify its unsampling part to automatically adju
   tensorboard --logdir=train_log/
   ``` 
 - When checkpoints are saved, you can use eval.py to test an input image with an arbitrary size.
+
+- Evaluate your model
+  ```bash
+  python eval.py --data_path ./datasets/your_dataset_folder/ --load_from_checkpoint ./checkpoints/unet_example/model-0 --batch_size 1
+  ```
