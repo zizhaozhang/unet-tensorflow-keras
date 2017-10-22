@@ -13,8 +13,6 @@ from __future__ import print_function
 SEED=0
 import numpy as np
 np.random.seed(SEED)
-import keras
-from keras import backend as K
 import tensorflow as tf
 tf.set_random_seed(SEED)
 
@@ -33,21 +31,21 @@ vis = VIS(save_path=opt.checkpoint_path)
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
-K.set_session(sess)
-K.set_learning_phase(1)
+
 
 # define data loader (with train and test)
-train_generator, _, train_samples, _ = dataLoader(opt.data_path, opt.batch_size, opt.imSize)
+img_shape = [opt.imSize, opt.imSize]
+img_shape = [256, 512]
+train_generator, train_samples = dataLoader(opt.data_path+'/train/', opt.batch_size,img_shape)
+test_generator, test_samples = dataLoader(opt.data_path+'/val/', 1,  img_shape, train_mode=False)
 # define test loader (optional to replace above test_generator)
-test_generator, test_samples = folderLoader(opt.data_path)
+# test_generator, test_samples = folderLoader(opt.data_path, imSize=(opt.imSize,opt.imSize))
 opt.iter_epoch = int(train_samples) 
 # define input holders
-img_shape = (opt.imSize, opt.imSize, 3)
-img = tf.placeholder(tf.float32, shape=img_shape)
-label = tf.placeholder(tf.int32, shape=(None, opt.imSize, opt.imSize))
+label = tf.placeholder(tf.int32, shape=[None]+img_shape)
 # define model
 with tf.name_scope('unet'):
-    model = UNet().create_model(img_shape=img_shape, num_class=opt.num_class)
+    model = UNet().create_model(img_shape=img_shape+[3], num_class=opt.num_class)
     img = model.input
     pred = model.output
 # define loss
@@ -89,7 +87,7 @@ with sess.as_default():
         try:
             saver.restore(sess, opt.load_from_checkpoint)
             print ('--> load from checkpoint '+opt.load_from_checkpoint)
-        except e:
+        except:
                 print ('unable to load checkpoint ...' + str(e))
     # debug
     start = global_step.eval()
@@ -99,25 +97,25 @@ with sess.as_default():
             saver.save(sess, opt.checkpoint_path+'model', global_step=global_step)
             print ('save a checkpoint at '+ opt.checkpoint_path+'model-'+str(it))
             print ('start testing {} samples...'.format(test_samples))
-            K.set_learning_phase(0)
             for ti in range(test_samples):
-                x_batch, y_batch, name = next(test_generator)
+                x_batch, y_batch = next(test_generator)
                 # tensorflow wants a different tensor order
                 feed_dict = {   
                                 img: x_batch,
                                 label: y_batch,
                             }
                 loss, pred_logits = sess.run([cross_entropy_loss, pred], feed_dict=feed_dict)
-                pred_map = np.argmax(pred_logits[0],axis=2)
-                score = vis.add_sample(pred_map, y_batch[0])
+                pred_map_batch = np.argmax(pred_logits, axis=3)
+                # import pdb; pdb.set_trace()
+                for pred_map, y in zip(pred_map_batch, y_batch):
+                    score = vis.add_sample(pred_map, y)
             vis.compute_scores(suffix=it)
-            K.set_learning_phase(1)
         
         x_batch, y_batch = next(train_generator)
         feed_dict = {   img: x_batch,
                         label: y_batch
                     }
-        _, loss, summary, lr, pred_logits = sess.run([ train_step, 
+        _, loss, summary, lr, pred_logits = sess.run([train_step, 
                                     cross_entropy_loss, 
                                     summary_merged,
                                     learning_rate,

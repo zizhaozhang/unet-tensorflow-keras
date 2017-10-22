@@ -1,0 +1,55 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+UNet	../model.py	/^class UNet():$/;"	kind:class	line:5
+__init__	../model.py	/^    def __init__(self):$/;"	kind:member	line:6
+config	../train.py	/^config = tf.ConfigProto()$/;"	kind:variable	line:25
+conv1_kernel	../train.py	/^conv1_kernel = tf.global_variables()[0] # get the first convolutional kernel$/;"	kind:variable	line:65
+create_model	../model.py	/^    def create_model(self, img_shape=None, backend='th', tf_input=None):$/;"	kind:member	line:27
+cross_entropy_loss	../train.py	/^    cross_entropy_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=pred))$/;"	kind:variable	line:53
+dice_coef	../utils.py	/^def dice_coef(y_true, y_pred):$/;"	kind:function	line:3
+dice_coef_loss	../utils.py	/^def dice_coef_loss(y_true, y_pred):$/;"	kind:function	line:10
+dice_evaluator	../train.py	/^    dice_evaluator = tf.reduce_mean(dice_coef(label, pred))$/;"	kind:variable	line:62
+eval.py	../eval.py	1;"	kind:file	line:1
+get_crop_shape	../model.py	/^    def get_crop_shape(self, target, refer):$/;"	kind:member	line:9
+global_step	../train.py	/^global_step = tf.Variable(0, name='global_step', trainable=False)$/;"	kind:variable	line:55
+ifresize	../eval.py	/^ifresize = False$/;"	kind:variable	line:38
+img	../train.py	/^img = tf.placeholder(tf.float32, shape=img_shape)$/;"	kind:variable	line:47
+img_shape	../eval.py	/^img_shape = (None, inh, inw, 3)$/;"	kind:variable	line:53
+img_shape	../train.py	/^img_shape = (None, 300, 300, 3)$/;"	kind:variable	line:46
+init_op	../eval.py	/^init_op = tf.global_variables_initializer()$/;"	kind:variable	line:60
+input_space	../eval.py	/^input_space = tf.placeholder(tf.float32, shape=img_shape)$/;"	kind:variable	line:54
+input_tensor	../eval.py	/^input_tensor = np.reshape(test_img, (1, inh, inw, 3))$/;"	kind:variable	line:46
+iter_epoch	../eval.py	/^iter_epoch = loader.get_iter_epoch()$/;"	kind:variable	line:50
+iter_epoch	../train.py	/^iter_epoch = loader.get_iter_epoch()$/;"	kind:variable	line:44
+kernel_0_to_1	../train.py	/^kernel_0_to_1 = (conv1_kernel - x_min) \/ (x_max - x_min)$/;"	kind:variable	line:69
+kernel_transposed	../train.py	/^kernel_transposed = tf.transpose(kernel_0_to_1, [3, 0, 1, 2]) # transpose$/;"	kind:variable	line:70
+label	../train.py	/^label = tf.placeholder(tf.float32, shape=(None, 300, 300, 1))$/;"	kind:variable	line:48
+learning_rate	../train.py	/^    learning_rate = tf.train.exponential_decay(0.0001, global_step,$/;"	kind:variable	line:57
+loader	../eval.py	/^loader = MuscleDataLayer(opt)$/;"	kind:variable	line:49
+main	../train.py	/^def main(_):$/;"	kind:function	line:118
+model.py	../model.py	1;"	kind:file	line:1
+opt	../eval.py	/^opt  = {$/;"	kind:variable	line:28
+opt	../train.py	/^opt  = {$/;"	kind:variable	line:32
+pre_mask	../eval.py	/^        pre_mask = pre_mask[0][0][:,:,0]$/;"	kind:variable	line:73
+pre_mask	../eval.py	/^        pre_mask = sess.run([pred], feed_dict={input_space: input_tensor})$/;"	kind:variable	line:72
+pred	../eval.py	/^    pred = UNet().create_model(img_shape, backend='tf', tf_input=input_space)$/;"	kind:variable	line:56
+pred	../train.py	/^    pred = UNet().create_model(img_shape, backend='tf', tf_input=img)$/;"	kind:variable	line:50
+saver	../eval.py	/^saver = tf.train.Saver()$/;"	kind:variable	line:58
+saver	../train.py	/^saver = tf.train.Saver()$/;"	kind:variable	line:82
+sess	../eval.py	/^sess = tf.Session()$/;"	kind:variable	line:24
+sess	../train.py	/^sess = tf.Session(config=config)$/;"	kind:variable	line:27
+start	../eval.py	/^        start = time.time()$/;"	kind:variable	line:71
+summary_merged	../train.py	/^summary_merged = tf.summary.merge_all()$/;"	kind:variable	line:78
+test_img	../eval.py	/^    test_img = misc.imresize(test_img, (inh, inw))$/;"	kind:variable	line:43
+test_img	../eval.py	/^test_img = misc.imread($/;"	kind:variable	line:40
+train	../train.py	/^def train():$/;"	kind:function	line:84
+train.py	../train.py	1;"	kind:file	line:1
+train_step	../train.py	/^train_step = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cross_entropy_loss, global_step=global_step)$/;"	kind:variable	line:59
+train_writer	../train.py	/^train_writer = tf.summary.FileWriter('.\/train_log', sess.graph)$/;"	kind:variable	line:81
+utils.py	../utils.py	1;"	kind:file	line:1
+x_max	../train.py	/^x_max = tf.reduce_max(conv1_kernel)$/;"	kind:variable	line:68
+x_min	../train.py	/^x_min = tf.reduce_min(conv1_kernel)$/;"	kind:variable	line:67

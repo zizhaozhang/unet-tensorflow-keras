@@ -9,7 +9,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from keras import backend as K
 import tensorflow as tf
 import os, sys
 import numpy as np
@@ -30,16 +29,13 @@ vis = VIS(save_path=opt.load_from_checkpoint)
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
-K.set_session(sess)
-K.set_learning_phase(0)
 
 # define data loader
-test_generator, test_samples = folderLoader(opt.data_path)
+img_shape = [opt.imSize, opt.imSize]
+test_generator, test_samples = folderLoader(opt.data_path, imSize=img_shape)
 
 # define model, the last dimension is the channel
-img_shape = (opt.imSize, opt.imSize, 3)
-# img = tf.placeholder(tf.float32, shape=img_shape)
-label = tf.placeholder(tf.int32, shape=(None, opt.imSize, opt.imSize))
+label = tf.placeholder(tf.int32, shape=[None]+img_shape)
 with tf.name_scope('unet'):
     model = UNet().create_model(img_shape=img_shape, num_class=opt.num_class)
     img = model.input

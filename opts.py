@@ -5,6 +5,7 @@
  * @modify date 2017-05-25 02:20:01
  * @desc [description]
 '''
+
 import argparse
 import os
 parser = argparse.ArgumentParser()
@@ -15,7 +16,7 @@ parser.add_argument('--lr_decay', type=float, default=0.9, help='learning rate d
 parser.add_argument('--epoch', type=int, default=50, help='# of epochs')
 parser.add_argument('--imSize', type=int, default=256, help='then crop to this size')
 parser.add_argument('--iter_epoch', type=int, default=0, help='# of iteration as an epoch')
-parser.add_argument('--num_class', type=int, default=6, help='# of classes')
+parser.add_argument('--num_class', type=int, default=2, help='# of classes')
 parser.add_argument('--checkpoint_path', type=str, default='', help='where checkpoint saved')
 parser.add_argument('--data_path', type=str, default='', help='where dataset saved. See loader.py to know how to organize the dataset folder')
 parser.add_argument('--load_from_checkpoint', type=str, default='', help='where checkpoint saved')

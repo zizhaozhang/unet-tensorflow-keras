@@ -6,7 +6,7 @@
  * @desc [description]
 '''
 
-from keras import backend as K
+# from keras import backend as K
 import numpy as np
 from PIL import Image
 import os, copy, shutil, json
@@ -51,7 +51,7 @@ class VIS:
 
     def compute_scores(self, suffix=0):
         meanIU = np.mean(np.array(self.mean_iu))
-        meanIU_per_cls = np.mean(np.array(self.cls_iu),axis=0)
+        meanIU_per_cls = np.mean(np.array(self.cls_iu), axis=0)
         print ('-'*20)
         print ('overall mean IU: {} '.format(meanIU))
         print ('mean IU per class')

@@ -1,2 +1,4 @@
 *.pyc
 *.sh
+__pychche__
+checkpoints/*
