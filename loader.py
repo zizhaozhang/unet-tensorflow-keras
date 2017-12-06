@@ -5,9 +5,6 @@
  * @modify date 2017-05-19 03:06:43
  * @desc [description]
 '''
-# import keras
-# from keras.preprocessing.image import ImageDataGenerator
-# extracted the image module from kears to remove bugs of unpaired image and mask
 
 from data_generator.image import ImageDataGenerator
 import scipy.misc as misc
@@ -19,57 +16,24 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 # Modify this for data normalization 
-def preprocess(img, label=None):
-    out_img = img.copy()
-    # out_img = img.copy() - 127.5
-    # out_img = (img.copy() - MEAN) / STD
-    if label is not None:
-        if len(label.shape) == 4:
-            label = label[:,:,:,0]
-        out_label = label / label.max()
-        return out_img, out_label.astype(np.int32)
-    else:
-        return out_img
+def preprocess(img, mean, std, label, normalize_label=True):
+    out_img = img / img.max() # scale to [0,1]
+    out_img = (out_img - np.array(mean).reshape(1,1,3)) / np.array(std).reshape(1,1,3) 
 
-def deprocess(img, label=None):
-    out_img = img.copy() + 127.5
-    # out_img = img.copy() * STD + MEAN
-    
-    if label is not None:
-        # label = label / 255.0
-        return out_img, label.astype(np.int32)
-    else: 
-        return out_img, None
+    if len(label.shape) == 4:
+        label = label[:,:,:,0]
+    if normalize_label:
+        if np.unique(label).size > 2:
+            print ('WRANING: the label has more than 2 classes. Set normalize_label to False')
+        label = label / label.max() # if the loaded label is binary has only [0,255], then we normalize it
+    return out_img, label.astype(np.int32)
 
-def folderLoader(data_path, imSize):
-    def load_img(path, grayscale=False):
-        # use the same loadering funcs with keras
-        img = pil_image.open(path)
-        if grayscale:
-            img = img.convert('L')
-        if img.size != (imSize[1], imSize[0]):
-            img = img.resize((imSize[1], imSize[0]))
-        return np.asarray(img)
+def deprocess(img, mean, std, label):
+    out_img = img / img.max() # scale to [0,1]
+    out_img = (out_img * np.array(std).reshape(1,1,3)) + np.array(std).reshape(1,1,3) 
+    out_img = out_img * 255.0
 
-    def im_iterator(im_list, im_path, gt_path):
-        for i in range(99999): #continue the iterator
-             for name in im_list:
-                im = load_img(os.path.join(im_path, name))
-                im = im[np.newaxis,:,:,:]
-                
-                gt = load_img(os.path.join(gt_path, name+'.png'), grayscale=True)
-                gt = gt[np.newaxis,:,:]
-                im, gt = preprocess(im, gt)
-                yield im, gt, name
-
-    im_path = os.path.join(data_path, 'val/img/0/')   
-    gt_path = os.path.join(data_path, 'val/gt/0/')       
-    im_list = glob.glob(im_path + '*.jpg')
-
-    im_list = [os.path.splitext(os.path.basename(a))[0] for a in im_list]
-    print ('{} test images are found'.format(len(im_list))) 
-
-    return im_iterator(im_list, im_path, gt_path), len(im_list)
+    return out_img.astype(np.uint8), label.astype(np.uint8)
 
 '''
     Use the Keras data generators to load train and test
@@ -87,15 +51,15 @@ def folderLoader(data_path, imSize):
                 0/
 
 '''
-def dataLoader(path, batch_size, imSize, train_mode=True):
-
+def dataLoader(path, batch_size, imSize, train_mode=True, mean=[0.5,0.5,0.5], std=[0.5,0.5,0.5]):
+    # image normalization default: scale to [-1,1]
     def imerge(a, b):
         for img, label in itertools.zip_longest(a,b):
             # j is the mask: 1) gray-scale and int8
-            img, label = preprocess(img, label)
+            img, label = preprocess(img, mean, std, label)
             yield img, label
     
-    #augmentation parms for the train generator
+    # augmentation parms for the train generator
     if train_mode:
         train_data_gen_args = dict(
                         horizontal_flip=True,
@@ -103,7 +67,8 @@ def dataLoader(path, batch_size, imSize, train_mode=True):
                         )
     else:
         train_data_gen_args = dict()
-        
+    
+    # seed has to been set to synchronize img and mask generators
     seed = 1
     train_image_datagen = ImageDataGenerator(**train_data_gen_args).flow_from_directory(
                                 path+'img',

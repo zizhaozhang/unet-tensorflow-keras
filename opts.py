@@ -31,4 +31,7 @@ print('-------------- End ----------------')
 
 if opt.checkpoint_path != '' and not os.path.isdir(opt.checkpoint_path):
     os.mkdir(opt.checkpoint_path)
-    
+
+# hardcode here
+dataset_mean = [0.5,0.5,0.5]
+dataset_std = [0.5,0.5,0.5]

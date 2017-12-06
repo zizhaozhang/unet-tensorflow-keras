@@ -10,7 +10,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-SEED=0
+SEED=0 # set set to allow reproducing runs
 import numpy as np
 np.random.seed(SEED)
 import tensorflow as tf
@@ -19,10 +19,11 @@ tf.set_random_seed(SEED)
 import os, shutil
 from model import UNet
 from utils import dice_coef
-from loader import dataLoader, folderLoader
+from loader import dataLoader
 from utils import VIS, mean_IU
 # configure args
 from opts import *
+from opts import dataset_mean, dataset_std # set them in opts
 
 # save and compute metrics
 vis = VIS(save_path=opt.checkpoint_path)
@@ -33,13 +34,11 @@ config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 
 
-# define data loader (with train and test)
+''' Users define data loader (with train and test) '''
 img_shape = [opt.imSize, opt.imSize]
-img_shape = [256, 512]
-train_generator, train_samples = dataLoader(opt.data_path+'/train/', opt.batch_size,img_shape)
-test_generator, test_samples = dataLoader(opt.data_path+'/val/', 1,  img_shape, train_mode=False)
-# define test loader (optional to replace above test_generator)
-# test_generator, test_samples = folderLoader(opt.data_path, imSize=(opt.imSize,opt.imSize))
+train_generator, train_samples = dataLoader(opt.data_path+'/train/', opt.batch_size,img_shape, mean=dataset_mean, std=dataset_std)
+test_generator, test_samples = dataLoader(opt.data_path+'/val/', 1,  img_shape, train_mode=False,mean=dataset_mean, std=dataset_std)
+
 opt.iter_epoch = int(train_samples) 
 # define input holders
 label = tf.placeholder(tf.int32, shape=[None]+img_shape)
@@ -57,9 +56,11 @@ with tf.name_scope('learning_rate'):
     learning_rate = tf.train.exponential_decay(opt.learning_rate, global_step,
                                            opt.iter_epoch, opt.lr_decay, staircase=True)
 train_step = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cross_entropy_loss, global_step=global_step)
+
 # compute dice score for simple evaluation during training
 # with tf.name_scope('dice_eval'):
 #     dice_evaluator = tf.reduce_mean(dice_coef(label, pred))
+
 ''' Tensorboard visualization '''
 # cleanup pervious info
 if opt.load_from_checkpoint == '':
@@ -122,11 +123,12 @@ with sess.as_default():
                                     pred
                                     ], feed_dict=feed_dict)
         global_step.assign(it).eval()
-
-        pred_map = np.argmax(pred_logits[0],axis=2)
+        train_writer.add_summary(summary, it)
+        
+        pred_map = np.argmax(pred_logits[0], axis=2)
         score, _ = mean_IU(pred_map, y_batch[0])
 
-        train_writer.add_summary(summary, it)
+       
         if it % 20 == 0 : 
             print ('[iter %d, epoch %.3f]: lr=%f loss=%f, mean_IU=%f' % (it, float(it)/opt.iter_epoch, lr, loss, score))
         

@@ -4,52 +4,141 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-UNet	../model.py	/^class UNet():$/;"	kind:class	line:5
-__init__	../model.py	/^    def __init__(self):$/;"	kind:member	line:6
-config	../train.py	/^config = tf.ConfigProto()$/;"	kind:variable	line:25
-conv1_kernel	../train.py	/^conv1_kernel = tf.global_variables()[0] # get the first convolutional kernel$/;"	kind:variable	line:65
-create_model	../model.py	/^    def create_model(self, img_shape=None, backend='th', tf_input=None):$/;"	kind:member	line:27
-cross_entropy_loss	../train.py	/^    cross_entropy_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=pred))$/;"	kind:variable	line:53
-dice_coef	../utils.py	/^def dice_coef(y_true, y_pred):$/;"	kind:function	line:3
-dice_coef_loss	../utils.py	/^def dice_coef_loss(y_true, y_pred):$/;"	kind:function	line:10
-dice_evaluator	../train.py	/^    dice_evaluator = tf.reduce_mean(dice_coef(label, pred))$/;"	kind:variable	line:62
+DirectoryIterator	../data_generator/image.py	/^class DirectoryIterator(Iterator):$/;"	kind:class	line:1051
+ImageDataGenerator	../data_generator/image.py	/^class ImageDataGenerator(object):$/;"	kind:class	line:437
+Iterator	../data_generator/image.py	/^class Iterator(object):$/;"	kind:class	line:815
+NumpyArrayIterator	../data_generator/image.py	/^class NumpyArrayIterator(Iterator):$/;"	kind:class	line:872
+SEED	../train.py	/^SEED=0$/;"	kind:variable	line:13
+Tokenizer	../data_generator/text.py	/^class Tokenizer(object):$/;"	kind:class	line:106
+UNet	../model.py	/^class UNet():$/;"	kind:class	line:17
+VIS	../utils.py	/^class VIS:$/;"	kind:class	line:15
+_EPSILON	../data_generator/image.py	/^_EPSILON = 10e-8$/;"	kind:variable	line:40
+_FLOATX	../data_generator/image.py	/^_FLOATX = 'float32'$/;"	kind:variable	line:37
+_IMAGE_DATA_FORMAT	../data_generator/image.py	/^_IMAGE_DATA_FORMAT = 'channels_last'$/;"	kind:variable	line:43
+__init__	../data_generator/image.py	/^  def __init__(self, n, batch_size, shuffle, seed):$/;"	kind:member	line:825
+__init__	../data_generator/image.py	/^  def __init__(self,$/;"	kind:member	line:1088
+__init__	../data_generator/image.py	/^  def __init__(self,$/;"	kind:member	line:479
+__init__	../data_generator/image.py	/^  def __init__(self,$/;"	kind:member	line:894
+__init__	../data_generator/text.py	/^  def __init__(self,$/;"	kind:member	line:133
+__init__	../model.py	/^    def __init__(self):$/;"	kind:member	line:18
+__init__	../utils.py	/^    def __init__(self, save_path):$/;"	kind:member	line:16
+__init__.py	../data_generator/__init__.py	1;"	kind:file	line:1
+__iter__	../data_generator/image.py	/^  def __iter__(self):  # pylint: disable=non-iterator-returned$/;"	kind:member	line:863
+__next__	../data_generator/image.py	/^  def __next__(self, *args, **kwargs):$/;"	kind:member	line:868
+_count_valid_files_in_directory	../data_generator/image.py	/^def _count_valid_files_in_directory(directory, white_list_formats,$/;"	kind:function	line:975
+_flow_index	../data_generator/image.py	/^  def _flow_index(self, n, batch_size=32, shuffle=False, seed=None):$/;"	kind:member	line:837
+_list_valid_filenames_in_directory	../data_generator/image.py	/^def _list_valid_filenames_in_directory(directory, white_list_formats,$/;"	kind:function	line:1007
+_recursive_list	../data_generator/image.py	/^  def _recursive_list(subpath):$/;"	kind:function	line:1027
+_recursive_list	../data_generator/image.py	/^  def _recursive_list(subpath):$/;"	kind:function	line:990
+add_sample	../utils.py	/^    def add_sample(self, pred, gt):$/;"	kind:member	line:45
+apply_transform	../data_generator/image.py	/^def apply_transform(x,$/;"	kind:function	line:269
+args	../opts.py	/^args = vars(opt)$/;"	kind:variable	line:26
+array_to_img	../data_generator/image.py	/^def array_to_img(x, data_format=None, scale=True):$/;"	kind:function	line:313
+cf	../train.py	/^    cf = os.listdir(opt.checkpoint_path)$/;"	kind:variable	line:66
+check_size	../utils.py	/^def check_size(eval_segm, gt_segm):$/;"	kind:function	line:147
+compute_scores	../utils.py	/^    def compute_scores(self, suffix=0):$/;"	kind:member	line:52
+config	../eval.py	/^config = tf.ConfigProto()$/;"	kind:variable	line:29
+config	../train.py	/^config = tf.ConfigProto()$/;"	kind:variable	line:31
+create_model	../model.py	/^    def create_model(self, img_shape, num_class):$/;"	kind:member	line:39
+cross_entropy_loss	../eval.py	/^    cross_entropy_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label, logits=pred))$/;"	kind:variable	line:45
+cross_entropy_loss	../train.py	/^    cross_entropy_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label, logits=pred))$/;"	kind:variable	line:53
+dataLoader	../loader.py	/^def dataLoader(path, batch_size, imSize, train_mode=True):$/;"	kind:function	line:90
+deprocess	../loader.py	/^def deprocess(img, label=None):$/;"	kind:function	line:34
+dice_coef	../utils.py	/^def dice_coef(y_true, y_pred):$/;"	kind:function	line:98
+dice_coef_loss	../utils.py	/^def dice_coef_loss(y_true, y_pred):$/;"	kind:function	line:105
+dice_score	../eval.py	/^    dice_score = 0$/;"	kind:variable	line:62
+epsilon	../data_generator/image.py	/^def epsilon():$/;"	kind:function	line:73
 eval.py	../eval.py	1;"	kind:file	line:1
-get_crop_shape	../model.py	/^    def get_crop_shape(self, target, refer):$/;"	kind:member	line:9
+extract_both_masks	../utils.py	/^def extract_both_masks(eval_segm, gt_segm, cl, n_cl):$/;"	kind:function	line:108
+extract_classes	../utils.py	/^def extract_classes(segm):$/;"	kind:function	line:114
+extract_masks	../utils.py	/^def extract_masks(segm, cl, n_cl):$/;"	kind:function	line:129
+feed_dict	../eval.py	/^        feed_dict = {   $/;"	kind:variable	line:66
+feed_dict	../train.py	/^                feed_dict = {   $/;"	kind:variable	line:103
+feed_dict	../train.py	/^        feed_dict = {   img: x_batch,$/;"	kind:variable	line:115
+fit	../data_generator/image.py	/^  def fit(self, x, augment=False, rounds=1, seed=None):$/;"	kind:member	line:745
+fit_on_sequences	../data_generator/text.py	/^  def fit_on_sequences(self, sequences):$/;"	kind:member	line:184
+fit_on_texts	../data_generator/text.py	/^  def fit_on_texts(self, texts):$/;"	kind:member	line:148
+flip_axis	../data_generator/image.py	/^def flip_axis(x, axis):$/;"	kind:function	line:306
+floatx	../data_generator/image.py	/^def floatx():$/;"	kind:function	line:45
+flow	../data_generator/image.py	/^  def flow(self,$/;"	kind:member	line:548
+flow_from_directory	../data_generator/image.py	/^  def flow_from_directory(self,$/;"	kind:member	line:569
+folderLoader	../loader.py	/^def folderLoader(data_path, imSize):$/;"	kind:function	line:44
+get_crop_shape	../model.py	/^    def get_crop_shape(self, target, refer):$/;"	kind:member	line:21
 global_step	../train.py	/^global_step = tf.Variable(0, name='global_step', trainable=False)$/;"	kind:variable	line:55
-ifresize	../eval.py	/^ifresize = False$/;"	kind:variable	line:38
-img	../train.py	/^img = tf.placeholder(tf.float32, shape=img_shape)$/;"	kind:variable	line:47
-img_shape	../eval.py	/^img_shape = (None, inh, inw, 3)$/;"	kind:variable	line:53
-img_shape	../train.py	/^img_shape = (None, 300, 300, 3)$/;"	kind:variable	line:46
-init_op	../eval.py	/^init_op = tf.global_variables_initializer()$/;"	kind:variable	line:60
-input_space	../eval.py	/^input_space = tf.placeholder(tf.float32, shape=img_shape)$/;"	kind:variable	line:54
-input_tensor	../eval.py	/^input_tensor = np.reshape(test_img, (1, inh, inw, 3))$/;"	kind:variable	line:46
-iter_epoch	../eval.py	/^iter_epoch = loader.get_iter_epoch()$/;"	kind:variable	line:50
-iter_epoch	../train.py	/^iter_epoch = loader.get_iter_epoch()$/;"	kind:variable	line:44
-kernel_0_to_1	../train.py	/^kernel_0_to_1 = (conv1_kernel - x_min) \/ (x_max - x_min)$/;"	kind:variable	line:69
-kernel_transposed	../train.py	/^kernel_transposed = tf.transpose(kernel_0_to_1, [3, 0, 1, 2]) # transpose$/;"	kind:variable	line:70
-label	../train.py	/^label = tf.placeholder(tf.float32, shape=(None, 300, 300, 1))$/;"	kind:variable	line:48
-learning_rate	../train.py	/^    learning_rate = tf.train.exponential_decay(0.0001, global_step,$/;"	kind:variable	line:57
-loader	../eval.py	/^loader = MuscleDataLayer(opt)$/;"	kind:variable	line:49
-main	../train.py	/^def main(_):$/;"	kind:function	line:118
+hashing_trick	../data_generator/text.py	/^def hashing_trick(text,$/;"	kind:function	line:69
+im_iterator	../loader.py	/^    def im_iterator(im_list, im_path, gt_path):$/;"	kind:function	line:54
+image.py	../data_generator/image.py	1;"	kind:file	line:1
+image_data_format	../data_generator/image.py	/^def image_data_format():$/;"	kind:function	line:60
+imerge	../loader.py	/^    def imerge(a, b):$/;"	kind:function	line:92
+img	../eval.py	/^    img = model.input$/;"	kind:variable	line:41
+img	../train.py	/^    img = model.input$/;"	kind:variable	line:49
+img_shape	../eval.py	/^img_shape = [opt.imSize, opt.imSize]$/;"	kind:variable	line:34
+img_shape	../train.py	/^img_shape = [256, 512]$/;"	kind:variable	line:38
+img_shape	../train.py	/^img_shape = [opt.imSize, opt.imSize]$/;"	kind:variable	line:37
+img_to_array	../data_generator/image.py	/^def img_to_array(img, data_format=None):$/;"	kind:function	line:363
+init_op	../eval.py	/^init_op = tf.global_variables_initializer()$/;"	kind:variable	line:50
+init_op	../train.py	/^init_op = tf.global_variables_initializer()$/;"	kind:variable	line:80
+label	../eval.py	/^label = tf.placeholder(tf.int32, shape=[None]+img_shape)$/;"	kind:variable	line:38
+label	../train.py	/^label = tf.placeholder(tf.int32, shape=[None]+img_shape)$/;"	kind:variable	line:45
+learning_rate	../train.py	/^    learning_rate = tf.train.exponential_decay(opt.learning_rate, global_step,$/;"	kind:variable	line:57
+linalg	../data_generator/image.py	/^  linalg = None$/;"	kind:variable	line:96
+list_pictures	../data_generator/image.py	/^def list_pictures(directory, ext='jpg|jpeg|bmp|png'):$/;"	kind:function	line:429
+load_img	../data_generator/image.py	/^def load_img(path, grayscale=False, target_size=None):$/;"	kind:function	line:397
+load_img	../loader.py	/^    def load_img(path, grayscale=False):$/;"	kind:function	line:45
+loader.py	../loader.py	1;"	kind:file	line:1
+make_sampling_table	../data_generator/sequence.py	/^def make_sampling_table(size, sampling_factor=1e-5):$/;"	kind:function	line:107
+maketrans	../data_generator/text.py	/^  maketrans = str.maketrans$/;"	kind:variable	line:35
+maketrans	../data_generator/text.py	/^  maketrans = string.maketrans$/;"	kind:variable	line:33
+mean_IU	../utils.py	/^def mean_IU(eval_segm, gt_segm):$/;"	kind:function	line:67
+model	../eval.py	/^    model = UNet().create_model(img_shape=img_shape, num_class=opt.num_class)$/;"	kind:variable	line:40
+model	../train.py	/^    model = UNet().create_model(img_shape=img_shape+[3], num_class=opt.num_class)$/;"	kind:variable	line:48
 model.py	../model.py	1;"	kind:file	line:1
-opt	../eval.py	/^opt  = {$/;"	kind:variable	line:28
-opt	../train.py	/^opt  = {$/;"	kind:variable	line:32
-pre_mask	../eval.py	/^        pre_mask = pre_mask[0][0][:,:,0]$/;"	kind:variable	line:73
-pre_mask	../eval.py	/^        pre_mask = sess.run([pred], feed_dict={input_space: input_tensor})$/;"	kind:variable	line:72
-pred	../eval.py	/^    pred = UNet().create_model(img_shape, backend='tf', tf_input=input_space)$/;"	kind:variable	line:56
-pred	../train.py	/^    pred = UNet().create_model(img_shape, backend='tf', tf_input=img)$/;"	kind:variable	line:50
-saver	../eval.py	/^saver = tf.train.Saver()$/;"	kind:variable	line:58
-saver	../train.py	/^saver = tf.train.Saver()$/;"	kind:variable	line:82
-sess	../eval.py	/^sess = tf.Session()$/;"	kind:variable	line:24
-sess	../train.py	/^sess = tf.Session(config=config)$/;"	kind:variable	line:27
-start	../eval.py	/^        start = time.time()$/;"	kind:variable	line:71
-summary_merged	../train.py	/^summary_merged = tf.summary.merge_all()$/;"	kind:variable	line:78
-test_img	../eval.py	/^    test_img = misc.imresize(test_img, (inh, inw))$/;"	kind:variable	line:43
-test_img	../eval.py	/^test_img = misc.imread($/;"	kind:variable	line:40
-train	../train.py	/^def train():$/;"	kind:function	line:84
+ndi	../data_generator/image.py	/^  ndi = None$/;"	kind:variable	line:97
+next	../data_generator/image.py	/^  def next(self):$/;"	kind:member	line:1179
+next	../data_generator/image.py	/^  def next(self):$/;"	kind:member	line:940
+one_hot	../data_generator/text.py	/^def one_hot(text,$/;"	kind:function	line:60
+opt	../opts.py	/^opt = parser.parse_args()$/;"	kind:variable	line:24
+opts.py	../opts.py	1;"	kind:file	line:1
+pad_sequences	../data_generator/sequence.py	/^def pad_sequences(sequences,$/;"	kind:function	line:27
+parser	../opts.py	/^parser = argparse.ArgumentParser()$/;"	kind:variable	line:11
+pred	../eval.py	/^    pred = model.output$/;"	kind:variable	line:42
+pred	../train.py	/^    pred = model.output$/;"	kind:variable	line:50
+pred_map	../eval.py	/^        pred_map = np.argmax(pred_logits[0],axis=2)$/;"	kind:variable	line:71
+pred_map	../train.py	/^        pred_map = np.argmax(pred_logits[0],axis=2)$/;"	kind:variable	line:126
+pred_map_batch	../train.py	/^                pred_map_batch = np.argmax(pred_logits, axis=3)$/;"	kind:variable	line:108
+preprocess	../loader.py	/^def preprocess(img, label=None):$/;"	kind:function	line:22
+random_channel_shift	../data_generator/image.py	/^def random_channel_shift(x, intensity, channel_axis=0):$/;"	kind:function	line:248
+random_rotation	../data_generator/image.py	/^def random_rotation(x,$/;"	kind:function	line:101
+random_shear	../data_generator/image.py	/^def random_shear(x,$/;"	kind:function	line:171
+random_shift	../data_generator/image.py	/^def random_shift(x,$/;"	kind:function	line:135
+random_transform	../data_generator/image.py	/^  def random_transform(self, x, seed=None):$/;"	kind:member	line:646
+random_zoom	../data_generator/image.py	/^def random_zoom(x,$/;"	kind:function	line:205
+reset	../data_generator/image.py	/^  def reset(self):$/;"	kind:member	line:834
+save_seg	../utils.py	/^    def save_seg(self, label_im, name, im=None, gt=None):$/;"	kind:member	line:31
+saver	../eval.py	/^saver = tf.train.Saver() # must be added in the end$/;"	kind:variable	line:47
+saver	../train.py	/^saver = tf.train.Saver() # must be added in the end$/;"	kind:variable	line:76
+score	../eval.py	/^        score = vis.add_sample(pred_map, y_batch[0])$/;"	kind:variable	line:72
+score	../train.py	/^                    score = vis.add_sample(pred_map, y)$/;"	kind:variable	line:111
+segm_size	../utils.py	/^def segm_size(segm):$/;"	kind:function	line:138
+sequence.py	../data_generator/sequence.py	1;"	kind:file	line:1
+sequences_to_matrix	../data_generator/text.py	/^  def sequences_to_matrix(self, sequences, mode='binary'):$/;"	kind:member	line:260
+sess	../eval.py	/^sess = tf.Session(config=config)$/;"	kind:variable	line:31
+sess	../train.py	/^sess = tf.Session(config=config)$/;"	kind:variable	line:33
+skipgrams	../data_generator/sequence.py	/^def skipgrams(sequence,$/;"	kind:function	line:140
+standardize	../data_generator/image.py	/^  def standardize(self, x):$/;"	kind:member	line:598
+start	../train.py	/^    start = global_step.eval()$/;"	kind:variable	line:93
+summary_merged	../train.py	/^summary_merged = tf.summary.merge_all()$/;"	kind:variable	line:73
+text.py	../data_generator/text.py	1;"	kind:file	line:1
+text_to_word_sequence	../data_generator/text.py	/^def text_to_word_sequence(text,$/;"	kind:function	line:38
+texts_to_matrix	../data_generator/text.py	/^  def texts_to_matrix(self, texts, mode='binary'):$/;"	kind:member	line:247
+texts_to_sequences	../data_generator/text.py	/^  def texts_to_sequences(self, texts):$/;"	kind:member	line:204
+texts_to_sequences_generator	../data_generator/text.py	/^  def texts_to_sequences_generator(self, texts):$/;"	kind:member	line:221
+tot_iter	../train.py	/^tot_iter = opt.iter_epoch * opt.epoch$/;"	kind:variable	line:79
 train.py	../train.py	1;"	kind:file	line:1
 train_step	../train.py	/^train_step = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cross_entropy_loss, global_step=global_step)$/;"	kind:variable	line:59
-train_writer	../train.py	/^train_writer = tf.summary.FileWriter('.\/train_log', sess.graph)$/;"	kind:variable	line:81
+train_writer	../train.py	/^train_writer = tf.summary.FileWriter(opt.checkpoint_path, sess.graph)$/;"	kind:variable	line:75
+transform_matrix_offset_center	../data_generator/image.py	/^def transform_matrix_offset_center(matrix, x, y):$/;"	kind:function	line:260
+union_classes	../utils.py	/^def union_classes(eval_segm, gt_segm):$/;"	kind:function	line:120
 utils.py	../utils.py	1;"	kind:file	line:1
-x_max	../train.py	/^x_max = tf.reduce_max(conv1_kernel)$/;"	kind:variable	line:68
-x_min	../train.py	/^x_min = tf.reduce_min(conv1_kernel)$/;"	kind:variable	line:67
+vis	../eval.py	/^vis = VIS(save_path=opt.load_from_checkpoint)$/;"	kind:variable	line:26
+vis	../train.py	/^vis = VIS(save_path=opt.checkpoint_path)$/;"	kind:variable	line:28

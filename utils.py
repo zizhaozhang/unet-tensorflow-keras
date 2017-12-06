@@ -28,12 +28,16 @@ class VIS:
         self.score_history = {}
         self.suffix = str(np.random.randint(1000))
 
+        self.palette = Image.open('palette_refer.png').palette
+
     def save_seg(self, label_im, name, im=None, gt=None):
 
-        seg = Image.fromarray(label_im.astype(np.int8), mode='P') # must convert to int8 first
-        if gt != None or im != None:
-            gt = Image.fromarray(gt.astype(np.int8), mode='P') # must convert to int8 first
-            im = Image.fromarray(im.astype(np.int8), mode='RGB')
+        seg = Image.fromarray(label_im.astype(np.uint8), mode='P') # must convert to int8 first
+        seg.palette = copy.copy(self.palette)
+        if gt is not None or im is not None:
+            gt = Image.fromarray(gt.astype(np.uint8), mode='P') # must convert to int8 first]
+            gt.palette = copy.copy(self.palette)
+            im = Image.fromarray(im.astype(np.uint8), mode='RGB')
             I = Image.new('RGB', (label_im.shape[1]*3, label_im.shape[0]))
             I.paste(im,(0,0))
             I.paste(gt,(256,0))

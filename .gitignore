@@ -2,3 +2,4 @@
 *.sh
 __pychche__
 checkpoints/*
+data_generator/__pychche__
